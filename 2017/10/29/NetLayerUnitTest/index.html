@@ -1,0 +1,903 @@
+
+<!DOCTYPE html>
+<html lang="zh-cn,en,default">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="大东哥">
+    <title>如何在iOS总单元测试网络层 - 大东哥</title>
+    <meta name="author" content="大东哥">
+    
+    
+    
+    <meta name="description" content="网络通信在每个iOSAPP中都是一个重要的部分。在iOS开发中，我们如何对网络层进行单元测试也是我们要关心的一个重点，那我们今天来探讨一下">
+<meta name="keywords" content="翻译,iOS,UnitTest">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="如何在iOS总单元测试网络层">
+<meta property="og:url" content="https://mistdon.github.io/2017/10/29/NetLayerUnitTest/index.html">
+<meta property="og:site_name" content="大东哥">
+<meta property="og:description" content="网络通信在每个iOSAPP中都是一个重要的部分。在iOS开发中，我们如何对网络层进行单元测试也是我们要关心的一个重点，那我们今天来探讨一下">
+<meta property="og:locale" content="zh-cn">
+<meta property="og:image" content="https://mistdon.github.io/_images/20171030_001.jpg">
+<meta property="og:image" content="https://mistdon.github.io/2017/10/29/NetLayerUnitTest/_images/20171030_002.jpg">
+<meta property="og:updated_time" content="2018-08-07T02:40:38.002Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="如何在iOS总单元测试网络层">
+<meta name="twitter:description" content="网络通信在每个iOSAPP中都是一个重要的部分。在iOS开发中，我们如何对网络层进行单元测试也是我们要关心的一个重点，那我们今天来探讨一下">
+<meta name="twitter:image" content="https://mistdon.github.io/_images/20171030_001.jpg">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="https://mistdon.github.io/assets/images/sd_avatar.JPG"/>
+    
+    
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style-sxklfps8ywgfyyjcowvnb4gxdgt0zjts3hsguljmv9uqanxjbnitrovtbrek.min.css">
+    <!--STYLES END-->
+    
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="4">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a class="header-title-link" href="/ ">大东哥</a>
+    </div>
+    
+        
+            <a  class="header-right-picture "
+                href="#about">
+        
+        
+            <img class="header-picture" src="/assets/images/sd_avatar.JPG" alt="作者的图片"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="4">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a href="/#about">
+                    <img class="sidebar-profile-picture" src="/assets/images/sd_avatar.JPG" alt="作者的图片"/>
+                </a>
+                <h4 class="sidebar-profile-name">大东哥</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>生活无限美好</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/ "
+                            
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-home"></i>
+                        <span class="sidebar-button-desc">首页</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-categories"
+                            
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-bookmark"></i>
+                        <span class="sidebar-button-desc">分类</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-tags"
+                            
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-tags"></i>
+                        <span class="sidebar-button-desc">标签</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-archives"
+                            
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-archive"></i>
+                        <span class="sidebar-button-desc">归档</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="#about"
+                            
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-question"></i>
+                        <span class="sidebar-button-desc">关于</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://github.com/momo13014" target="_blank" rel="noopener">
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-github"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://stackoverflow.com/users/6532225" target="_blank" rel="noopener">
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-stack-overflow"></i>
+                        <span class="sidebar-button-desc">Stack Overflow</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="mailto:shendong13014@gmail.com" target="_blank" rel="noopener">
+                    
+                        <i class="sidebar-button-icon fa fa-lg fa-envelope-o"></i>
+                        <span class="sidebar-button-desc">邮箱</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="4"
+                 class="
+                        hasCoverMetaIn
+                        ">
+                
+<article class="post" itemscope itemType="http://schema.org/BlogPosting">
+    
+    
+        <div class="post-header main-content-wrap text-left">
+    
+        <h1 class="post-title" itemprop="headline">
+            如何在iOS总单元测试网络层
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time itemprop="datePublished" datetime="2017-10-29T12:46:26+08:00">
+	
+		    10月 29, 2017
+    	
+    </time>
+    
+        <span>发布在 </span>
+        
+    <a class="category-link" href="/categories/移动端/">移动端</a>
+
+
+    
+</div>
+
+    
+</div>
+    
+    <div class="post-content markdown" itemprop="articleBody">
+        <div class="main-content-wrap">
+            <p>网络通信在每个iOSAPP中都是一个重要的部分。<br>在iOS开发中，我们如何对网络层进行单元测试也是我们要关心的一个重点，那我们今天来探讨一下<br><a id="more"></a><br>原文链接：<a href="http://hoangtran.me/ios/testing/2016/09/12/unit-test-network-layer-in-ios/" target="_blank" rel="noopener">How to unit test your network layer in iOS</a><br>当用户点击app中的UI元素，通常都会有1个或多个网络请求发送到服务器，去请求更新的数据，返回结果给用户。</p>
+<p>让我们来看看一个经典的新闻App的一个简单的网络请求用例：</p>
+<ul>
+<li>请求用户授权</li>
+<li>请求新闻来源列表: Engadget, Mashable, Medium等等</li>
+<li>当用户点击一个新闻源的时候，请求最近更新的文章</li>
+<li>当用户点击其中一个文章的时候，请求详情</li>
+<li>当用户点击交互按钮后，将所有文章标记为已读</li>
+</ul>
+<p><strong>网络请求无所不在</strong>，我们不仅应该清楚的知道网络请求，而且应该更好的去实现它。</p>
+<p>今天我们就来学习如何创建一个从RESTful API服务器中获取数据的网络层，它包括<strong>设计</strong>，<strong>编程</strong>，也包括<strong>单元测试</strong>。</p>
+<p>以下是详细列表:</p>
+<ul>
+<li>1.设计协议</li>
+<li>2.实现协议<ul>
+<li>NSURLSession</li>
+<li>AFNetworking</li>
+<li>Alamofire</li>
+</ul>
+</li>
+<li>3.使用协议</li>
+<li>4.为协议编写单元测试<ul>
+<li>写什么？</li>
+<li>如何写？</li>
+<li>准备测试</li>
+<li>开始写测试用例<ul>
+<li>第一步：设置单元测试的项目</li>
+<li>第二步：创建一个新的spec文件</li>
+<li>第三步：实现一个真实网络请求的网络请求</li>
+<li>第四步：创建一个响应文件</li>
+<li>第五步：请求网络</li>
+<li>第六步：实现正确解析json文件的协议</li>
+<li>第七步：测试错误状态</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>使用什么样的RESTful API？</strong></p>
+<p>让我们来使用一个简单的吧<br> 实现一个获取Github用户信息的API</p>
+<p>语法   </p>
+<pre><code>GET https://api.github.com/users/:username
+</code></pre><p>示例    </p>
+<pre><code>GET https://api.github.com/users/momo13014  
+GET https://api.github.com/users/orta  
+GET https://api.github.com/users/chriseidhof
+</code></pre><p>如果你在浏览器中点击这个链接<a href="https://api.github.com/users/momo13014" target="_blank" rel="noopener">https://api.github.com/users/momo13014 </a>, 他将会以json格式返回结果<br>很简单是不是？让我们继续实现我们的app</p>
+<h2 id="1-设计协议"><a href="#1-设计协议" class="headerlink" title="1.设计协议"></a><strong>1.设计协议</strong></h2><p>在你的Target中创建一个新的文件，命名为<strong>GitHubApiClient.swift</strong><br>添加一个名为<strong>GitHubApiClient</strong>的协议<br><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">GitHubApiClient</span> </span>&#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>你可以看到，API我们上传一个<strong>用户名(username)</strong>作为参数，我们在协议中实现：<br><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">GitHubApiClient</span> </span>&#123;</span><br><span class="line">  <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">requestUserWithUsername</span><span class="params">(username: String)</span></span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>现在我们需要处理请求结束后的回调. 如果请求成功，我们希望以一个合适的格式获取用户数据<br><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">requestUserWithUsername</span><span class="params">(username: String,</span></span></span><br><span class="line"><span class="function"><span class="params">                                   onSuccess: <span class="params">(GitHubUserData)</span></span></span> -&gt; <span class="type">Void</span>)</span><br><span class="line">	                                   </span><br></pre></td></tr></table></figure><br> <strong>GitHubUserData</strong>是我们创建的存储返回json数据的结构体<br> <figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"> <span class="class"><span class="keyword">struct</span> <span class="title">GitHubUserData</span> </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> name: <span class="type">String</span></span><br><span class="line">  <span class="keyword">var</span> bio: <span class="type">String</span></span><br><span class="line">  <span class="keyword">var</span> email: <span class="type">String</span></span><br><span class="line">  <span class="keyword">var</span> numberOfFollowers: <span class="type">Int</span></span><br><span class="line">  <span class="keyword">var</span> numberOfFollowing: <span class="type">Int</span></span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>当请求失败时，我们希望获取失败信息<br><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">requestUserWithUsername</span><span class="params">(username: String,</span></span></span><br><span class="line"><span class="function"><span class="params">                                   onSuccess: <span class="params">(GitHubUserData)</span></span></span> -&gt; <span class="type">Void</span>,</span><br><span class="line">                                     onError: (<span class="type">NSError</span>) -&gt; <span class="type">Void</span>)</span><br></pre></td></tr></table></figure><br>让我们为两个回调设置的更易阅读<br><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typealias</span> <span class="type">GitHubGetUserCallback</span> = (<span class="type">GitHubUserData</span>) -&gt; <span class="type">Void</span>   </span><br><span class="line"><span class="keyword">typealias</span> <span class="type">ErrorCallback</span> = (<span class="type">NSError</span>) -&gt; <span class="type">Void</span></span><br></pre></td></tr></table></figure><br>现在，我们的协议像这样<br><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typealias</span> <span class="type">GitHubGetUserCallback</span> = (<span class="type">GitHubUserData</span>) -&gt; <span class="type">Void</span></span><br><span class="line"><span class="keyword">typealias</span> <span class="type">ErrorCallback</span> = (<span class="type">NSError</span>) -&gt; <span class="type">Void</span></span><br><span class="line">	</span><br><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">GitHubApiClient</span> </span>&#123;</span><br><span class="line">  <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">requestUserWithUsername</span><span class="params">(username: String,</span></span></span><br><span class="line"><span class="function"><span class="params">                                     onSuccess: GitHubGetUserCallback,</span></span></span><br><span class="line"><span class="function"><span class="params">                                       onError: ErrorCallback)</span></span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>有时候我们并不想都实现两个回调，让我们把它改成<strong>可选(optionals)</strong><br><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">GitHubApiClient</span> </span>&#123;</span><br><span class="line">  <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">requestUserWithUsername</span><span class="params">(username: String,</span></span></span><br><span class="line"><span class="function"><span class="params">                                     onSuccess: GitHubGetUserCallback?,</span></span></span><br><span class="line"><span class="function"><span class="params">                                       onError: ErrorCallback?)</span></span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>现在我们已经实现了协议设计，去实现编程部分吧。</p>
+<h2 id="2-实现协议"><a href="#2-实现协议" class="headerlink" title="2.实现协议"></a><strong>2.实现协议</strong></h2><p>在iOS中有许多实现网络请求方法，其中3个最常使用的是<strong>NSURLSession</strong>, <strong>AFNetworking</strong>和<strong>Alamofire</strong>.<br><strong>NSURLSession</strong><br>支持iOS7及以上</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> Foundation</span><br><span class="line"><span class="keyword">import</span> SwiftyJSON</span><br><span class="line">	</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">NativeApiClient</span>: <span class="title">GitHubApiClient</span> </span>&#123;</span><br><span class="line">	</span><br><span class="line">  <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">requestUserWithUsername</span><span class="params">(username: String,</span></span></span><br><span class="line"><span class="function"><span class="params">                                     onSuccess: GitHubGetUserCallback? = <span class="literal">nil</span>,</span></span></span><br><span class="line"><span class="function"><span class="params">                                       onError: ErrorCallback? = <span class="literal">nil</span>)</span></span> &#123;</span><br><span class="line">    <span class="keyword">let</span> urlString = <span class="string">"https://api.github.com/users/<span class="subst">\(username)</span>"</span></span><br><span class="line">    <span class="keyword">let</span> url = <span class="type">NSURL</span>(string: urlString)!</span><br><span class="line">	</span><br><span class="line">    <span class="keyword">let</span> defaultSession = <span class="type">NSURLSession</span>(configuration: <span class="type">NSURLSessionConfiguration</span>.defaultSessionConfiguration())</span><br><span class="line">    <span class="keyword">let</span> dataTask = defaultSession.dataTaskWithURL(url) &#123; data, response, error <span class="keyword">in</span></span><br><span class="line">      <span class="keyword">if</span> <span class="keyword">let</span> error = error &#123;</span><br><span class="line">        onError?(error)</span><br><span class="line">      &#125; <span class="keyword">else</span> <span class="keyword">if</span> <span class="keyword">let</span> data = data &#123;</span><br><span class="line">        <span class="keyword">let</span> json = <span class="type">JSON</span>(data: data)</span><br><span class="line">        onSuccess?(<span class="type">GitHubUserData</span>(json: json))</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    dataTask.resume()</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>AFNetworking</strong><br>记住在你的Podfile中添加<code>pod &#39;AFNetworking&#39;</code></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> Alamofire</span><br><span class="line"><span class="keyword">import</span> SwiftyJSON</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">AlamofireApiClient</span>: <span class="title">GitHubApiClient</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">requestUserWithUsername</span><span class="params">(username: String,</span></span></span><br><span class="line"><span class="function"><span class="params">                                     onSuccess: GitHubGetUserCallback? = <span class="literal">nil</span>,</span></span></span><br><span class="line"><span class="function"><span class="params">                                       onError: ErrorCallback? = <span class="literal">nil</span>)</span></span> &#123;</span><br><span class="line">    <span class="keyword">let</span> urlString = <span class="string">"https://api.github.com/users/<span class="subst">\(username)</span>"</span></span><br><span class="line"></span><br><span class="line">    <span class="type">Alamofire</span>.request(.<span class="type">GET</span>, urlString)</span><br><span class="line">      .validate()</span><br><span class="line">      .responseJSON &#123; response <span class="keyword">in</span></span><br><span class="line">        <span class="keyword">switch</span> response.result &#123;</span><br><span class="line">        <span class="keyword">case</span> .<span class="type">Success</span>:</span><br><span class="line">          <span class="keyword">if</span> <span class="keyword">let</span> data = response.result.value &#123;</span><br><span class="line">            <span class="keyword">let</span> json = <span class="type">JSON</span>(data)</span><br><span class="line">            onSuccess?(<span class="type">GitHubUserData</span>(json: json))</span><br><span class="line">          &#125;</span><br><span class="line">        <span class="keyword">case</span> .<span class="type">Failure</span>(<span class="keyword">let</span> error):</span><br><span class="line">          onError?(error)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>Alamofire</strong></p>
+<p>记住在你的Podfile中添加<code>pod &#39;Alamofire&#39;</code>  </p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> Alamofire</span><br><span class="line"><span class="keyword">import</span> SwiftyJSON</span><br><span class="line">	</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">AlamofireApiClient</span>: <span class="title">GitHubApiClient</span> </span>&#123;	</span><br><span class="line">  <span class="keyword">static</span> <span class="function"><span class="keyword">func</span> <span class="title">requestUserWithUsername</span><span class="params">(username: String,</span></span></span><br><span class="line"><span class="function"><span class="params">                                     onSuccess: GitHubGetUserCallback? = <span class="literal">nil</span>,</span></span></span><br><span class="line"><span class="function"><span class="params">                                       onError: ErrorCallback? = <span class="literal">nil</span>)</span></span> &#123;</span><br><span class="line">    <span class="keyword">let</span> urlString = <span class="string">"https://api.github.com/users/<span class="subst">\(username)</span>"</span></span><br><span class="line">    <span class="type">Alamofire</span>.request(.<span class="type">GET</span>, urlString)</span><br><span class="line">      .validate()</span><br><span class="line">      .responseJSON &#123; response <span class="keyword">in</span></span><br><span class="line">        <span class="keyword">switch</span> response.result &#123;</span><br><span class="line">        <span class="keyword">case</span> .<span class="type">Success</span>:</span><br><span class="line">          <span class="keyword">if</span> <span class="keyword">let</span> data = response.result.value &#123;</span><br><span class="line">            <span class="keyword">let</span> json = <span class="type">JSON</span>(data)</span><br><span class="line">            onSuccess?(<span class="type">GitHubUserData</span>(json: json))</span><br><span class="line">          &#125;</span><br><span class="line">        <span class="keyword">case</span> .<span class="type">Failure</span>(<span class="keyword">let</span> error):</span><br><span class="line">          onError?(error)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;	</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="3-使用协议"><a href="#3-使用协议" class="headerlink" title="3.使用协议"></a><strong>3.使用协议</strong></h2><p>这个相对简单，直接引入即可</p>
+<ul>
+<li><strong>用户名(username)</strong></li>
+<li>成功回调的闭包<strong>onSucess</strong></li>
+<li>失败回调的闭包<strong>onError</strong></li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">NativeApiClient</span>.requestUserWithUsername(<span class="string">"hoang-tran"</span>, onSuccess: &#123; userData <span class="keyword">in</span></span><br><span class="line"></span><br><span class="line">  <span class="built_in">print</span>(userData)</span><br><span class="line"></span><br><span class="line">&#125;, onError: &#123; error <span class="keyword">in</span></span><br><span class="line"></span><br><span class="line">  <span class="built_in">print</span>(error.localizedDescription)</span><br><span class="line"></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+<p>或者我们可以移除我们不关心的回调<br><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">NativeApiClient</span>.requestUserWithUsername(<span class="string">"hoang-tran"</span>, onSuccess: &#123; userData <span class="keyword">in</span></span><br><span class="line">  <span class="built_in">print</span>(userData)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure><br>或者<br><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">NativeApiClient</span>.requestUserWithUsername(<span class="string">"hoang-tran"</span>, onError: &#123; error <span class="keyword">in</span></span><br><span class="line">  <span class="built_in">print</span>(error.localizedDescription)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure><br>或者<br><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">NativeApiClient</span>.requestUserWithUsername(<span class="string">"hoang-tran"</span>)</span><br></pre></td></tr></table></figure></p>
+<h2 id="4-添加单元测试"><a href="#4-添加单元测试" class="headerlink" title="4.添加单元测试"></a><strong>4.添加单元测试</strong></h2><h5 id="测试什么？"><a href="#测试什么？" class="headerlink" title="测试什么？"></a>测试什么？</h5><p>当我们讨论网络请求的时候，有以下几点需要我们考虑:</p>
+<ul>
+<li>请求的路径是否正确？</li>
+<li>当请求成功时，它是否正确的解析了数据并返回正确的模型</li>
+<li>当它失败时，它是否返回了正确的错误信息</li>
+</ul>
+<h5 id="如何测试？"><a href="#如何测试？" class="headerlink" title="如何测试？"></a>如何测试？</h5><p>我们将使用一个HTTP网络请求框架：<a href="https://github.com/kylef/Mockingjay" target="_blank" rel="noopener">Mockingjay</a><br>它允许你以下方式的声明</p>
+<p><code>Stub request with url A and return json file B.</code></p>
+<p>或者</p>
+<p><code>Stub request with url A and return error.</code></p>
+<h5 id="Stub还能做什么？"><a href="#Stub还能做什么？" class="headerlink" title="Stub还能做什么？"></a>Stub还能做什么？</h5><p>这是一个stub的语法</p>
+<p><code>Stub event A and do custom action B</code></p>
+<p>它意味着：</p>
+<blockquote>
+<p>  当A请求发生时，不再执行原方法，而替代执行自定义的B方法</p>
+</blockquote>
+<p>所以：</p>
+<p><code>Stub request with url A and return json file B.</code></p>
+<p>也就翻译成</p>
+<blockquote>
+<p>当有一个请求连接A时，不把它发送到服务器，而是用我们项目中本地B文件作为响应返回</p>
+</blockquote>
+<p>举例：<br><code>Stub request with url https://api.github.com/users/hoang-tran
+and return the file GetUserSuccess.json</code></p>
+<p>可以理解为：</p>
+<blockquote>
+<p>当有一个请求<strong><a href="https://api.github.com/users/hoang-tran" target="_blank" rel="noopener">https://api.github.com/users/hoang-tran</a></strong>，不要将它发送到服务器，而是用<strong>GetUserSuccess.json</strong>作为响应返回</p>
+</blockquote>
+<p>所以为一个网络请求编写单元测试时，我们希望按照以下顺序执行：</p>
+<ol>
+<li>截取网络请求，返回我们自定义的json文件</li>
+<li>利用协议执行网络请求</li>
+<li>使用<strong>onSuccess</strong>和<strong>onError</strong>来描述返回的结果</li>
+</ol>
+<h2 id="准备测试"><a href="#准备测试" class="headerlink" title="准备测试"></a><strong>准备测试</strong></h2><p>在我们开始之前，确保你熟悉以下知识：</p>
+<ul>
+<li><a href="http://hoangtran.me/ios/testing/2016/07/31/how-to-write-unit-tests-in-ios-p1-xctestcase/" target="_blank" rel="noopener">如何编写单元测试-第一部分: XCTestCase</a></li>
+<li><a href="http://hoangtran.me/ios/testing/2016/08/07/how-to-write-unit-tests-in-ios-p2-behavior-driven-development-bdd/" target="_blank" rel="noopener">如何编写单元测试-第一部分: 行为驱动(BDD)</a></li>
+<li><a href="http://hoangtran.me/ios/testing/2016/08/09/write-better-unit-test-assertion-with-nimble/" target="_blank" rel="noopener">使用Nimble更好的编写断言</a></li>
+</ul>
+<h2 id="开始编写单元测试"><a href="#开始编写单元测试" class="headerlink" title="开始编写单元测试"></a><strong>开始编写单元测试</strong></h2><h3 id="第一步：设置原单测试项目"><a href="#第一步：设置原单测试项目" class="headerlink" title="第一步：设置原单测试项目"></a><strong>第一步：设置原单测试项目</strong></h3><p>打开Podfile，添加以下Pods到你的Target中</p>
+<ul>
+<li><strong>Quick</strong>：一个Swift编写的行为驱动框架(BDD)</li>
+<li><strong>Nimble</strong>: 一个易读的断言库</li>
+<li><strong>Mockingjay</strong>: 网络请求库</li>
+</ul>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">platform :ios, '<span class="number">9.0</span>'</span><br><span class="line"></span><br><span class="line">target '<span class="type">TestNetworkLayer'</span> <span class="keyword">do</span></span><br><span class="line">  use_frameworks!</span><br><span class="line"></span><br><span class="line">  #...</span><br><span class="line"></span><br><span class="line">  target '<span class="type">TestNetworkLayerTests'</span> <span class="keyword">do</span></span><br><span class="line">    inherit! :search_paths</span><br><span class="line">    pod '<span class="type">Quick'</span></span><br><span class="line">    pod '<span class="type">Nimble'</span></span><br><span class="line">    pod '<span class="type">Mockingjay'</span></span><br><span class="line">  end</span><br><span class="line">end</span><br></pre></td></tr></table></figure>
+<p>在你的Terminal中安装这3个库</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pod install</span><br></pre></td></tr></table></figure>
+<p>打开<em>.xcworkspace</em>文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">open TestNetworkLayer.xcworkspace</span><br></pre></td></tr></table></figure>
+<h3 id="第二步：创建新的spec文件"><a href="#第二步：创建新的spec文件" class="headerlink" title="第二步：创建新的spec文件"></a><strong>第二步：创建新的spec文件</strong></h3><p>在你的Target中创建一个名为<strong>NativeApiClientSpec.swift</strong>的文件<br><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> Quick</span><br><span class="line"><span class="keyword">import</span> Nimble</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">NativeApiClientSpec</span> : <span class="title">QuickSpec</span> </span>&#123;</span><br><span class="line">  <span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">spec</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">super</span>.spec()</span><br><span class="line">    describe(<span class="string">"first test"</span>) &#123;</span><br><span class="line">      it(<span class="string">"should pass"</span>) &#123;</span><br><span class="line">        expect(<span class="number">1</span>).to(<span class="built_in">equal</span>(<span class="number">1</span>))</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>执行<strong>Cmd+U</strong>确定测试通过</p>
+<h3 id="第三步：编写真实的网络请求单元测试"><a href="#第三步：编写真实的网络请求单元测试" class="headerlink" title="第三步：编写真实的网络请求单元测试"></a><strong>第三步：编写真实的网络请求单元测试</strong></h3><p>首先是成功的测试<br><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">spec</span><span class="params">()</span></span> &#123;</span><br><span class="line">  <span class="keyword">super</span>.spec()</span><br><span class="line">  describe(<span class="string">"requestUserWithName"</span>) &#123;</span><br><span class="line">    context(<span class="string">"success"</span>) &#123;</span><br><span class="line">      it(<span class="string">"returns GitHubUserData"</span>) &#123;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>在它的闭包中实现网络请求<br><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">it(<span class="string">"returns GitHubUserData"</span>) &#123;</span><br><span class="line">  <span class="type">NativeApiClient</span>.requestUserWithName(<span class="string">"hoang-tran"</span>, onSuccess: &#123; userData <span class="keyword">in</span></span><br><span class="line">  &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>请求成功后，存储用户数据<br><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">it(<span class="string">"returns GitHubUserData"</span>) &#123;</span><br><span class="line">  <span class="keyword">var</span> returnedUserData: <span class="type">GitHubUserData</span>?</span><br><span class="line">  <span class="type">NativeApiClient</span>.requestUserWithName(<span class="string">"hoang-tran"</span>, onSuccess: &#123; userData <span class="keyword">in</span></span><br><span class="line">    returnedUserData = userData</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>我们希望返回的用户数据有有效的值<br><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">it(<span class="string">"returns GitHubUserData"</span>) &#123;</span><br><span class="line">  <span class="keyword">var</span> returnedUserData: <span class="type">GitHubUserData</span>?</span><br><span class="line">  <span class="type">NativeApiClient</span>.requestUserWithName(<span class="string">"hoang-tran"</span>, onSuccess: &#123; userData <span class="keyword">in</span></span><br><span class="line">    returnedUserData = userData</span><br><span class="line">  &#125;)</span><br><span class="line">  expect(returnedUserData).toEventuallyNot(beNil())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br><strong>toEventusllyNot</strong>意味它会持续的检查<strong>用户数据</strong>，查看它是否有值(不为空)</p>
+<p>几秒后，用户数据有值，测试通过，否则失败</p>
+<p>然而，当你执行测试(cmd+U)时，它失败了</p>
+<p>这是以为真实的网络请求需要花费时间，<strong>toEventually</strong>不会等太长的时间，去看返回的数据是否有值，这就导致了失败</p>
+<p>默认等待时间是1秒，如果我们设的更长一点，测试会通过</p>
+<pre><code>//...
+
+expect(returnedUserData).toEventuallyNot(beNil(), timeout: 20)
+</code></pre><p>但是我们并不想那样做，我们的目标是<strong>完全不</strong>去请求网络；</p>
+<h3 id="第四步：创建响应文件"><a href="#第四步：创建响应文件" class="headerlink" title="第四步：创建响应文件"></a><strong>第四步：创建响应文件</strong></h3><p>打开Terminal，去<strong>TestNetworkLayerTests</strong>文件夹（假设你的文件名为<strong>TestNetworkLayer</strong>）</p>
+<pre><code>cd TestNetworkLayerTests
+</code></pre><p>创建一个名为<strong>Fixtures</strong>的文件夹，然后进入它</p>
+<pre><code>mkdir Fixtures
+
+cd Fixtures
+</code></pre><p>请注意：<strong>Fixtures</strong>仅是一个存放共同响应文件的名字，你可以任意命名</p>
+<p>创建一个新的json文件，命名为<strong> GetUserSuccess.json</strong>，然后编辑它<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">touch GetUserSuccess.json</span><br><span class="line">	</span><br><span class="line">open GetUserSuccess.json</span><br></pre></td></tr></table></figure></p>
+<p>在你的浏览器总打开这个链接<a href="https://api.github.com/users/hoang-tran" target="_blank" rel="noopener">https://api.github.com/users/hoang-tran</a></p>
+<p>将json内容粘贴在<strong>GetUserSuccess.json</strong>文件中</p>
+<pre><code>{
+  &quot;login&quot;: &quot;hoang-tran&quot;,
+  &quot;id&quot;: 6714157,
+  &quot;avatar_url&quot;: &quot;https://avatars.githubusercontent.com/u/6714157?v=3&quot;,
+  &quot;gravatar_id&quot;: &quot;&quot;,
+  &quot;url&quot;: &quot;https://api.github.com/users/hoang-tran&quot;,
+  &quot;html_url&quot;: &quot;https://github.com/hoang-tran&quot;,
+  &quot;followers_url&quot;: &quot;https://api.github.com/users/hoang-tran/followers&quot;,
+  &quot;following_url&quot;: &quot;https://api.github.com/users/hoang-tran/following{/other_user}&quot;,
+  &quot;gists_url&quot;: &quot;https://api.github.com/users/hoang-tran/gists{/gist_id}&quot;,
+  &quot;starred_url&quot;: &quot;https://api.github.com/users/hoang-tran/starred{/owner}{/repo}&quot;,
+  &quot;subscriptions_url&quot;: &quot;https://api.github.com/users/hoang-tran/subscriptions&quot;,
+  &quot;organizations_url&quot;: &quot;https://api.github.com/users/hoang-tran/orgs&quot;,
+  &quot;repos_url&quot;: &quot;https://api.github.com/users/hoang-tran/repos&quot;,
+  &quot;events_url&quot;: &quot;https://api.github.com/users/hoang-tran/events{/privacy}&quot;,
+  &quot;received_events_url&quot;: &quot;https://api.github.com/users/hoang-tran/received_events&quot;,
+  &quot;type&quot;: &quot;User&quot;,
+  &quot;site_admin&quot;: false,
+  &quot;name&quot;: &quot;Hoang Tran&quot;,
+  &quot;company&quot;: &quot;East Agile Vietnam&quot;,
+  &quot;blog&quot;: &quot;http://hoangtran.me/&quot;,
+  &quot;location&quot;: &quot;Ho Chi Minh city, VietNam&quot;,
+  &quot;email&quot;: &quot;hoangtx.master@gmail.com&quot;,
+  &quot;hireable&quot;: null,
+  &quot;bio&quot;: &quot;Hi, I&apos;m Hoang. I&apos;m a Swift lover. I blog weekly about iOS development/testing/deployment at http://hoangtran.me/\r\nAnd I happen to love GitHub so much 😜 &quot;,
+  &quot;public_repos&quot;: 15,
+  &quot;public_gists&quot;: 23,
+  &quot;followers&quot;: 16,
+  &quot;following&quot;: 93,
+  &quot;created_at&quot;: &quot;2014-02-18T09:42:07Z&quot;,
+  &quot;updated_at&quot;: &quot;2016-08-30T03:04:04Z&quot;
+}
+</code></pre><p>在Finder中打开当前文件夹</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">open .</span><br></pre></td></tr></table></figure>
+<p>将<strong>Fixtures</strong>拖入到你的测试Target文件中</p>
+<p><img src="/_images/20171030_001.jpg" alt=""></p>
+<p>Xcode会向你确定链接信息，确保你将文件夹拖入到Test Target而不是main Target中<br>点击<strong>完成(Finish)</strong></p>
+<p><img src="_images/20171030_002.jpg" alt=""></p>
+<h3 id="第五步：模拟网络请求"><a href="#第五步：模拟网络请求" class="headerlink" title="第五步：模拟网络请求"></a><strong>第五步：模拟网络请求</strong></h3><p>在<strong>NativeApiClientSpec.swift</strong>中，我们将模拟请求，使用我们的<strong>GetUserSuccess.json</strong>文件作为响应文件，而不是真的去请求网络<br><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">it(<span class="string">"returns GitHubUserData"</span>) &#123;</span><br><span class="line">  <span class="keyword">var</span> returnedUserData: <span class="type">GitHubUserData</span>?</span><br><span class="line">	</span><br><span class="line">  <span class="comment">// 1.</span></span><br><span class="line">  <span class="keyword">let</span> path = <span class="type">NSBundle</span>(forClass: <span class="keyword">self</span>.<span class="keyword">dynamicType</span>).pathForResource(<span class="string">"GetUserSuccess"</span>, ofType: <span class="string">"json"</span>)!</span><br><span class="line">	</span><br><span class="line">  <span class="comment">// 2.</span></span><br><span class="line">  <span class="keyword">let</span> data = <span class="type">NSData</span>(contentsOfFile: path)!</span><br><span class="line">	</span><br><span class="line">  <span class="comment">// 3.</span></span><br><span class="line">  <span class="keyword">self</span>.stub(uri(<span class="string">"https://api.github.com/users/hoang-tran"</span>), builder: jsonData(data))</span><br><span class="line">	</span><br><span class="line">  <span class="type">NativeApiClient</span>.requestUserWithName(<span class="string">"hoang-tran"</span>, onSuccess: &#123; userData <span class="keyword">in</span></span><br><span class="line">    returnedUserData = userData</span><br><span class="line">  &#125;)</span><br><span class="line">  expect(returnedUserData).toEventuallyNot(beNil())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>我们实现了以下步骤</p>
+<ol>
+<li>获取<strong>GetUserSuccess.json </strong>的路径</li>
+<li>将json文件转换成NSData</li>
+<li>截取请求，这样每次请求<a href="https://api.github.com/users/hoang-tran" target="_blank" rel="noopener">https://api.github.com/users/hoang-tran</a>时，它会返回一个假的json文件，而不是真的网络请求</li>
+</ol>
+<p>一切就绪，执行<strong>Cmd+U</strong>测试.</p>
+<p>这次，它应该是通过的</p>
+<p>为了确定真的没有去请求网络，关闭你电脑的网络重新测试，它应该还是通过的</p>
+<h3 id="第六步：执行协议解析数据"><a href="#第六步：执行协议解析数据" class="headerlink" title="第六步：执行协议解析数据"></a><strong>第六步：执行协议解析数据</strong></h3><p>我们应该为<strong>返回的数据(returnedUserData )</strong>编写一些断言，来确定json文件被正确解析道<strong>GitHubUserData</strong>结构体中了<br><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//...</span></span><br><span class="line">	</span><br><span class="line">expect(returnedUserData).toEventuallyNot(beNil())</span><br><span class="line">expect(returnedUserData?.name) == <span class="string">"Hoang Tran"</span></span><br><span class="line">expect(returnedUserData?.email) == <span class="string">"hoangtx.master@gmail.com"</span></span><br><span class="line">expect(returnedUserData?.numberOfFollowers) == <span class="number">120</span></span><br><span class="line">expect(returnedUserData?.numberOfFollowing) == <span class="number">133</span></span><br></pre></td></tr></table></figure>    </p>
+<h3 id="第七步：测试错误"><a href="#第七步：测试错误" class="headerlink" title="第七步：测试错误"></a><strong>第七步：测试错误</strong></h3><p>首先声明错误内容<br><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">override</span> <span class="function"><span class="keyword">func</span> <span class="title">spec</span><span class="params">()</span></span> &#123;</span><br><span class="line">  <span class="keyword">super</span>.spec()</span><br><span class="line">	</span><br><span class="line">  describe(<span class="string">"requestUserWithName"</span>) &#123;</span><br><span class="line">    context(<span class="string">"success"</span>) &#123;</span><br><span class="line">      it(<span class="string">"returns GitHubUserData"</span>) &#123;</span><br><span class="line">        <span class="comment">//...</span></span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">	</span><br><span class="line">    context(<span class="string">"error"</span>) &#123;</span><br><span class="line">      it(<span class="string">"returns error"</span>) &#123;</span><br><span class="line">	</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>拦截请求返回错误信息<br><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> error = <span class="type">NSError</span>(domain: <span class="string">"Describe your error here"</span>, code: <span class="number">404</span>, userInfo: <span class="literal">nil</span>)</span><br><span class="line">	</span><br><span class="line"><span class="keyword">self</span>.stub(uri(<span class="string">"https://api.github.com/users/hoang-tran"</span>), builder: failure(error))</span><br></pre></td></tr></table></figure><br>完整的测试用例<br><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">it(<span class="string">"returns error"</span>) &#123;</span><br><span class="line">  <span class="keyword">var</span> returnedError: <span class="type">NSError</span>?</span><br><span class="line">	</span><br><span class="line">  <span class="keyword">let</span> error = <span class="type">NSError</span>(domain: <span class="string">"Describe your error here"</span>, code: <span class="number">404</span>, userInfo: <span class="literal">nil</span>)</span><br><span class="line">	</span><br><span class="line">  <span class="keyword">self</span>.stub(uri(<span class="string">"https://api.github.com/users/hoang-tran"</span>), builder: failure(error))</span><br><span class="line">	</span><br><span class="line">  <span class="type">NativeApiClient</span>.requestUserWithName(<span class="string">"hoang-tran"</span>, onError: &#123; error <span class="keyword">in</span></span><br><span class="line">    returnedError = error</span><br><span class="line">  &#125;)</span><br><span class="line">	</span><br><span class="line">  expect(returnedError).toEventuallyNot(beNil())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><br>重新运行，以确保测试通过</p>
+<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a><strong>结语</strong></h2><p>我没想到会写这么长的一篇文章，让我们结束吧</p>
+<p>你可以在这里找到完整的代码<a href="https://github.com/hoang-tran/TestNetworkLayer" target="_blank" rel="noopener">https://github.com/hoang-tran/TestNetworkLayer</a></p>
+
+            
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">标签</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/UnitTest/">UnitTest</a> <a class="tag tag--primary tag--small t-link" href="/tags/iOS/">iOS</a> <a class="tag tag--primary tag--small t-link" href="/tags/翻译/">翻译</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/11/02/hahha/"  data-tooltip="你好，11月">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/10/28/55/" data-tooltip="55">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+            
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <span class="copyrights">
+        Copyrights &copy; 2018 大东哥. All Rights Reserved.
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="4">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/11/02/hahha/"  data-tooltip="你好，11月">
+                
+                    <i class="fa fa-angle-left"></i>
+                    <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                </a>
+            </li>
+            <li class="post-action">
+                
+                    <a class="post-action-btn btn btn--default tooltip--top" href="/2017/10/28/55/" data-tooltip="55">
+                
+                    <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                    <i class="fa fa-angle-right"></i>
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a class="post-action-btn btn btn--default btn-open-shareoptions"  href="#btn-open-shareoptions">
+                <i class="fa fa-share-alt"></i>
+            </a>
+        </li>
+        
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#">
+            
+                <i class="fa fa-list"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                <div id="share-options-bar" class="share-options-bar" data-behavior="4">
+    <i id="btn-close-shareoptions" class="fa fa-close"></i>
+    <ul class="share-options">
+        
+    </ul>
+</div>
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-remove"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/sd_avatar.JPG" alt="作者的图片"/>
+        
+            <h4 id="about-card-name">大东哥</h4>
+        
+            <div id="about-card-bio"><p>生活无限美好</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>全栈开始工程师</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker"></i>
+                <br/>
+                Shanghai, China
+            </div>
+        
+    </div>
+</div>
+
+        <div id="algolia-search-modal" class="modal-container">
+    <div class="modal">
+        <div class="modal-header">
+            <span class="close-button"><i class="fa fa-close"></i></span>
+            <a href="https://algolia.com" target="_blank" rel="noopener" class="searchby-algolia text-color-light link-unstyled">
+                <span class="searchby-algolia-text text-color-light text-small">by</span>
+                <img class="searchby-algolia-logo" src="https://www.algolia.com/static_assets/images/press/downloads/algolia-light.svg">
+            </a>
+            <i class="search-icon fa fa-search"></i>
+            <form id="algolia-search-form">
+                <input type="text" id="algolia-search-input" name="search"
+                    class="form-control input--large search-input" placeholder="Search "
+                    />
+            </form>
+        </div>
+        <div class="modal-body">
+            <div class="no-result text-color-light text-center">没有找到文章</div>
+            <div class="results">
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="https://mistdon.github.io/2016/05/09/hello-hexo/">
+                            <h3 class="media-heading">Hello hexo</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    2016年5月9日
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="https://mistdon.github.io/2016/11/05/Git-command/">
+                            <h3 class="media-heading">Git常用命令</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    2016年11月5日
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p>记录一下Git的常用命令<br></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="https://mistdon.github.io/2017/01/28/WebStor,Sublime Text的使用/">
+                            <h3 class="media-heading">WebStorm, Sublime Text的使用</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    2017年1月28日
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p>WebStorm和Sublime Text作为常用的工具，记录一下扩展使用的方法和包管理</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="https://mistdon.github.io/2017/05/05/了解Node-js/">
+                            <h3 class="media-heading">了解Node.js</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    2017年5月5日
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p>Node.js作为一个JavaScript编写的web框架，其中有很多方便使用的地方，在此记录一下<br></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="https://mistdon.github.io/2017/10/28/Netlayer-test/">
+                            <h3 class="media-heading">Netlayer-test</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    2017年10月28日
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="https://mistdon.github.io/2017/10/28/Markdown语法/">
+                            <h3 class="media-heading">Markdown语法</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    2017年10月28日
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="https://mistdon.github.io/2017/10/28/freeAPIS/">
+                            <h3 class="media-heading">test blog</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    2017年10月28日
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="https://mistdon.github.io/2017/10/28/Little-Room/">
+                            <h3 class="media-heading">Little Room</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    2017年10月28日
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="https://mistdon.github.io/2017/10/28/333/">
+                            <h3 class="media-heading">333</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    2017年10月28日
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="https://mistdon.github.io/2017/10/28/44/">
+                            <h3 class="media-heading">44</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    2017年10月28日
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="https://mistdon.github.io/2017/10/28/55/">
+                            <h3 class="media-heading">55</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    2017年10月28日
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="https://mistdon.github.io/2017/10/29/NetLayerUnitTest/">
+                            <h3 class="media-heading">如何在iOS总单元测试网络层</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    2017年10月29日
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p>网络通信在每个iOSAPP中都是一个重要的部分。<br>在iOS开发中，我们如何对网络层进行单元测试也是我们要关心的一个重点，那我们今天来探讨一下<br></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="https://mistdon.github.io/2017/11/02/hahha/">
+                            <h3 class="media-heading">你好，11月</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    2017年11月2日
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p>11月，希望我们都能被善待！<br></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="https://mistdon.github.io/2017/11/05/CocoaPods私有repo/">
+                            <h3 class="media-heading">CocoaPods私有repo</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    2017年11月5日
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p><strong><a href="https://cocoapods.org/" target="_blank" rel="noopener">CocoaPods</a></strong> 作为iOS常用的包管理工具，给我们开发带来了很多便利之处，我们可以使用别人的作品来帮助我们快速的开发，比如著名的<code>AFNetworking</code>，<code>Masonry</code>等。有时候我们希望将自己团队的<em>Pod</em>集中管理，又和官方的区别开来，这里就需要创建自己团队的<em>Repo</em>。<br></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+                <div class="media">
+                    
+                    <div class="media-body">
+                        <a class="link-unstyled" href="https://mistdon.github.io/2018/01/07/理解Swift的Copy-on-write机制/">
+                            <h3 class="media-heading">理解Swift的Copy-on-write机制</h3>
+                        </a>
+                        <span class="media-meta">
+                            <span class="media-date text-small">
+                                
+                                    2018年1月7日
+                                
+                            </span>
+                        </span>
+                        <div class="media-content hide-xs font-merryweather"><p>翻译：原文链接：<a href="https://medium.com/@lucianoalmeida1/understanding-swift-copy-on-write-mechanisms-52ac31d68f2f" target="_blank" rel="noopener">Understanding Swift Copy-on-Write mechanisms</a></p>
+<p>在Swift中，我们有引用类型(类Classes)和值类型(结构体Structs, 元祖Tuples, 枚举enums)。值类型有一个Copy机制: 如果你将一个值类型变量赋值给你一个变量，或者将它作为参数传递给一个函数(inoout 参数除外), 这个值类型的数据将会被Copy。你将会有两个相同内容的值，同时被声明了两个不同的内存空间。关于引用类型和值类型的区别，请参赛<a href="https://developer.apple.com/swift/blog/?id=10" target="_blank" rel="noopener">Apple官方内容</a>。</p></div>
+                    </div>
+                    <div style="clear:both;"></div>
+                    <hr>
+                </div>
+                
+            </div>
+        </div>
+        <div class="modal-footer">
+            <p class="results-count text-medium"
+                data-message-zero="没有找到文章"
+                data-message-one="找到 1 篇文章"
+                data-message-other="找到 {n} 篇文章">
+                找到 15 篇文章
+            </p>
+        </div>
+    </div>
+</div>
+
+        
+<div id="cover" style="background-image:url('/assets/images/cover.jpg');"></div>
+        <!--SCRIPTS-->
+<script src="/assets/js/script-ivwiy10zeb8fifc4swnhkwneuk64y53w2scmdmtp8thi9cqfxh31aowtroaz.min.js"></script>
+<!--SCRIPTS END-->
+
+    
+
+
+    </body>
+</html>
