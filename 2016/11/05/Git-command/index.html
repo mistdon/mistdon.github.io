@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="大东哥">
 <meta property="og:description" content="记录一下Git的常用命令">
 <meta property="og:locale" content="zh-cn">
-<meta property="og:updated_time" content="2018-08-07T02:40:38.001Z">
+<meta property="og:updated_time" content="2018-08-07T08:31:24.220Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Git常用命令">
 <meta name="twitter:description" content="记录一下Git的常用命令">
@@ -174,14 +174,19 @@
     <div class="article-entry" itemprop="articleBody">
       
         <p>记录一下Git的常用命令<br><a id="more"></a><br>Git常用的命令</p>
-<p>##标签(tag)<br>打标签（例如 1.1.1）<br><code>git tag 1.1.1</code><br>删除标签<br><code>git tag -d 1.1.1</code><br>推送所有标签<br><code>git push origin --tags</code></p>
-<h2 id="远程-remote"><a href="#远程-remote" class="headerlink" title="远程(remote)"></a>远程(remote)</h2><p>查看远程<br><code>git remote -v</code></p>
-<blockquote>
-<p>origin    <a href="https://github.com/momo13014/SDNetworking.git" target="_blank" rel="noopener">https://github.com/momo13014/SDNetworking.git</a> (fetch)<br>origin    <a href="https://github.com/momo13014/SDNetworking.git" target="_blank" rel="noopener">https://github.com/momo13014/SDNetworking.git</a> (push)</p>
-</blockquote>
-<p>删除远程<br><code>git remote rm origin</code></p>
-<p>增加远程</p>
-<p><code>git remote add origin https://github.com/momo13014/SDNetworking.git</code></p>
+<h2 id="标签-tag"><a href="#标签-tag" class="headerlink" title="标签(tag)"></a>标签(tag)</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git tag 1.1.1 // 打标签</span><br><span class="line">git tag -d 1.1.1 // 删除标签</span><br><span class="line">git push origin --tags // 推送所有变化的标签</span><br></pre></td></tr></table></figure>
+<h2 id="远程-remote"><a href="#远程-remote" class="headerlink" title="远程(remote)"></a>远程(remote)</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git remote -v // 查看远程</span><br><span class="line">git remote rm origin // 删除远程</span><br><span class="line">git remote add origin https://github.com/momo13014/SDNetworking.git // 增加远程</span><br></pre></td></tr></table></figure>
+<h3 id="Stash"><a href="#Stash" class="headerlink" title="Stash"></a>Stash</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">git stash // 保存当前缓存</span><br><span class="line">git stash pop  // 取出当前缓存</span><br><span class="line">git stash list // 查看缓存列表</span><br><span class="line">git stash clear // 清除缓存标记列表</span><br></pre></td></tr></table></figure>
+<h3 id="合并"><a href="#合并" class="headerlink" title="合并"></a>合并</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git merge master // 将主分支合并到当前分支</span><br><span class="line">git rebase master // 主分支和当前分支溯源合并（破坏git线路）</span><br><span class="line">   -- 其他git rebase --<span class="built_in">continue</span>, git rebase --abort等命令</span><br></pre></td></tr></table></figure>
+<h3 id="分支"><a href="#分支" class="headerlink" title="分支"></a>分支</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">git checkout -b new_branch_name // 新建分支</span><br><span class="line">git branch -m another_branch_name // 更改当前分支的名字</span><br><span class="line">git checkout master // 切换回主分支</span><br><span class="line">git branch -D another_branch_name // 删除本地分支(不能处于被删除的分支上)</span><br><span class="line">git push origin --delete origin/new_branch_name // 删除远程分支</span><br></pre></td></tr></table></figure>
+<h3 id="回归"><a href="#回归" class="headerlink" title="回归"></a>回归</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git reset --hard commit_id // 返回某个commit_id所对应的节点，并且删除所有更改</span><br><span class="line">git reset --soft commit_id // 返回某个commit_id所对应的节点，但是在本地保留所有更改</span><br></pre></td></tr></table></figure>
+<p>参考链接：</p>
+<ol>
+<li><p><a href="http://guides.beanstalkapp.com/version-control/common-git-commands.html" target="_blank" rel="noopener">Common git commands</a></p>
+</li>
+<li><p><a href="https://git-scm.com/" target="_blank" rel="noopener">Git官网</a></p>
+</li>
+</ol>
 
       
 
