@@ -12,10 +12,8 @@
    ```yaml
    skip_render: README.md
    ```
-
    
-
-   3. 自己写了一个deploy.sh
+3. 自己写了一个deploy.sh
 
    ```shell
    hexo generate -w
@@ -31,4 +29,4 @@
 sh deploy.sh "commit_message"
 ```
 
-可以避免commits和README.md被覆盖
+可以避免*commits*和*README.md*被覆盖
