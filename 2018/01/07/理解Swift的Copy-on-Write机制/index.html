@@ -8,17 +8,21 @@
   <link rel="dns-prefetch" href="https://mistdon.github.io">
   <title>理解Swift的Copy-on-Write机制 | 大东哥</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="理解Swift的Copy-on-Write机制">
+  <meta name="description" content="翻译：原文链接：Understanding Swift Copy-on-Write mechanisms 在Swift中，我们有引用类型(类Classes)和值类型(结构体Structs, 元组Tuples, 枚举enums)。值类型有一个Copy机制: 如果你将一个值类型变量赋值给你一个变量，或者将它作为参数传递给一个函数(inoout 参数除外), 这个值类型的数据将会被Copy。你将会有两个">
+<meta name="keywords" content="iOS,Swift,翻译">
 <meta property="og:type" content="article">
 <meta property="og:title" content="理解Swift的Copy-on-Write机制">
-<meta property="og:url" content="https://mistdon.github.io/2018/08/08/理解Swift的Copy-on-Write机制/index.html">
+<meta property="og:url" content="https://mistdon.github.io/2018/01/07/理解Swift的Copy-on-Write机制/index.html">
 <meta property="og:site_name" content="大东哥">
-<meta property="og:description" content="理解Swift的Copy-on-Write机制">
+<meta property="og:description" content="翻译：原文链接：Understanding Swift Copy-on-Write mechanisms 在Swift中，我们有引用类型(类Classes)和值类型(结构体Structs, 元组Tuples, 枚举enums)。值类型有一个Copy机制: 如果你将一个值类型变量赋值给你一个变量，或者将它作为参数传递给一个函数(inoout 参数除外), 这个值类型的数据将会被Copy。你将会有两个">
 <meta property="og:locale" content="zh-cn">
-<meta property="og:updated_time" content="2018-08-08T08:17:08.473Z">
+<meta property="og:image" content="https://cdn-images-1.medium.com/max/1600/1*YKokr5q6sL-Cge6AVPBsyQ.gif">
+<meta property="og:image" content="https://cdn-images-1.medium.com/max/1600/1*kRJ3buv6d1vvGRI74Dw9RQ.gif">
+<meta property="og:updated_time" content="2018-08-08T08:23:45.945Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="理解Swift的Copy-on-Write机制">
-<meta name="twitter:description" content="理解Swift的Copy-on-Write机制">
+<meta name="twitter:description" content="翻译：原文链接：Understanding Swift Copy-on-Write mechanisms 在Swift中，我们有引用类型(类Classes)和值类型(结构体Structs, 元组Tuples, 枚举enums)。值类型有一个Copy机制: 如果你将一个值类型变量赋值给你一个变量，或者将它作为参数传递给一个函数(inoout 参数除外), 这个值类型的数据将会被Copy。你将会有两个">
+<meta name="twitter:image" content="https://cdn-images-1.medium.com/max/1600/1*YKokr5q6sL-Cge6AVPBsyQ.gif">
   
     <link rel="alternative" href="/atom.xml" title="大东哥" type="application/atom+xml">
   
@@ -164,16 +168,31 @@
   
 
         
-        <a href="/2018/08/08/理解Swift的Copy-on-Write机制/" class="archive-article-date">
-  	<time datetime="2018-08-08T08:17:08.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-08-08</time>
+        <a href="/2018/01/07/理解Swift的Copy-on-Write机制/" class="archive-article-date">
+  	<time datetime="2018-01-07T08:22:19.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-01-07</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        理解Swift的Copy-on-Write机制
-<a id="more"></a>
+        <p>翻译：原文链接：<a href="https://medium.com/@lucianoalmeida1/understanding-swift-copy-on-write-mechanisms-52ac31d68f2f" target="_blank" rel="noopener">Understanding Swift Copy-on-Write mechanisms</a></p>
+<p>在Swift中，我们有引用类型(类Classes)和值类型(结构体Structs, 元组Tuples, 枚举enums)。值类型有一个Copy机制: 如果你将一个值类型变量赋值给你一个变量，或者将它作为参数传递给一个函数(inoout 参数除外), 这个值类型的数据将会被Copy。你将会有两个相同内容的值，同时被声明了两个不同的内存空间。关于引用类型和值类型的区别，请参赛<a href="https://developer.apple.com/swift/blog/?id=10" target="_blank" rel="noopener">Apple官方内容</a>。<br><a id="more"></a></p>
+<p>既然我们要讨论Copy-on-Write机制，就有必要了解Swift对数据的存储机制。</p>
+<p>好，我们开始吧！</p>
+<h3 id="什么是-Copy-on-Write？"><a href="#什么是-Copy-on-Write？" class="headerlink" title="什么是 Copy-on-Write？"></a>什么是 Copy-on-Write？</h3><p><img src="https://cdn-images-1.medium.com/max/1600/1*YKokr5q6sL-Cge6AVPBsyQ.gif" alt="Alt text"></p>
+<p>在Swift中，当你有比较大的数据值，且需要将它赋值或者作为一个参数传递给一个函数的时候，复制它，在性能上耗能很大，因为你需要复制它的所有数据，并重新申请一份内存空间。</p>
+<p>为了减少这个问题，Swift标准库实现了一个特殊的机制: 当对值类型数据，例如数组，只有当它的内容改变的时候才对它进行Copy，或者当它有超过一个的引用的时候。由于此值是唯一的引用，它并不需要Copy, 可以在改变它的时候进行Copy。因为，仅是赋值或者作为一个参数传递给函数的时候，并不需要对值类型的数据进行Copy，这样既能节省内存空间，也可以提高效率。</p>
+<h3 id="需要重点了解的是-…"><a href="#需要重点了解的是-…" class="headerlink" title="需要重点了解的是 …"></a>需要重点了解的是 …</h3><p><strong>Copy-on-Write</strong> , 并不是所有值类型默认实现的。是Swift标准库中某些特定类型实现的，比如数组Array，集合Collections，等等，因为并不是Swift标准库中所有值类型有这个特性，同样的，你自己创建的值类型并没有这个特性，除非你自己去实现它。后面将会介绍如何自己实现。</p>
+<p>让我们先看看下面的例子</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> Foundation</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">print</span><span class="params">(address o: UnsafeRawPointer )</span></span> &#123;</span><br><span class="line">    <span class="built_in">print</span>(<span class="type">String</span>(format: <span class="string">"%p"</span>, <span class="type">Int</span>(bitPattern: o)))</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> array1: [<span class="type">Int</span>] = [<span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>]</span><br><span class="line"><span class="keyword">var</span> array2 = array1</span><br><span class="line"></span><br><span class="line"><span class="comment">//Print with just assign</span></span><br><span class="line"><span class="built_in">print</span>(address: array1) <span class="comment">//0x600000078de0</span></span><br><span class="line"><span class="built_in">print</span>(address: array2) <span class="comment">//0x600000078de0</span></span><br><span class="line"><span class="comment">//Let's mutate array2 to see what's</span></span><br><span class="line">array2.append(<span class="number">4</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(address: array2) <span class="comment">//0x6000000aa100</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//Output</span></span><br><span class="line"><span class="comment">//0x600000078de0 array1 address</span></span><br><span class="line"><span class="comment">//0x600000078de0 array2 address before mutation</span></span><br><span class="line"><span class="comment">//0x6000000aa100 array2 address after mutation</span></span><br></pre></td></tr></table></figure>
+<p>以上是Copy-on-Write实现的例子。当array1被创建并且赋值给array2的时候，因为Copy-on-Write机制，两个array有相同的内存地址。当array2被改变的时候，array2才被真正的赋值并且有了新的内存地址。</p>
+<h3 id="为自定义值类型实现Copy-on-Write机制"><a href="#为自定义值类型实现Copy-on-Write机制" class="headerlink" title="为自定义值类型实现Copy-on-Write机制"></a>为自定义值类型实现Copy-on-Write机制</h3><p>你可以为自定义的值类型实现Copy-on-Write机制，下面的例子可以在Swift的源代码中找到。<a href="https://github.com/apple/swift/blob/master/docs/OptimizationTips.rst" target="_blank" rel="noopener">编写高质量的Swift代码</a></p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">Ref</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">  <span class="keyword">var</span> val : <span class="type">T</span></span><br><span class="line">  <span class="keyword">init</span>(<span class="number">_</span> v : <span class="type">T</span>) &#123;val = v&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Box</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> ref : <span class="type">Ref</span>&lt;<span class="type">T</span>&gt;</span><br><span class="line">    <span class="keyword">init</span>(<span class="number">_</span> x : <span class="type">T</span>) &#123; ref = <span class="type">Ref</span>(x) &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> value: <span class="type">T</span> &#123;</span><br><span class="line">        <span class="keyword">get</span> &#123; <span class="keyword">return</span> ref.val &#125;</span><br><span class="line">        <span class="keyword">set</span> &#123;</span><br><span class="line">          <span class="keyword">if</span> (!<span class="built_in">isUniquelyReferencedNonObjC</span>(&amp;ref)) &#123;</span><br><span class="line">            ref = <span class="type">Ref</span>(newValue)</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">          &#125;</span><br><span class="line">          ref.val = newValue</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// This code was an example taken from the swift repo doc file OptimizationTips </span></span><br><span class="line"><span class="comment">// Link: https://github.com/apple/swift/blob/master/docs/OptimizationTips.rst#advice-use-copy-on-write-semantics-for-large-values</span></span><br></pre></td></tr></table></figure>
+<p>上面的例子展示了如何通过引用类型为一个泛型值类型T添加Copy-on-Write机制。通过管理一个引用类型，当它的值不是为唯一的引用类型是返回一个新的实例，否则返回唯一的引用类型。</p>
+<h3 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h3><p>Copy-on-Write是一个非常机智的方法来优化值类型的Copy，这个机制在Swift中被广泛应用，即使大多数的时候我们并没有直观的看到它，底层函数帮我们实现了它。但是知道它的实现原理对我们日常的编程也是非常有好处的。</p>
+<p><img src="https://cdn-images-1.medium.com/max/1600/1*kRJ3buv6d1vvGRI74Dw9RQ.gif" alt="That&#39;s all folks"></p>
+<p>以上是Copy-on-Write的所有内容，希望你喜欢。</p>
 
       
 
@@ -208,7 +227,45 @@
     <div class="article-info article-info-index">
       
       
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">iOS</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Swift</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">翻译</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
       
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/Swift//" class="article-tag-list-link color1">Swift</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/Swift/翻译//" class="article-tag-list-link color3">翻译</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/Swift/翻译/iOS//" class="article-tag-list-link color4">iOS</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
 
       
 
@@ -221,18 +278,18 @@
   
 <nav id="article-nav">
   
-    <a href="/2018/08/08/通过继承实现一个搜索框架/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2018/04/08/Swift4的Codable探究/" id="article-nav-newer" class="article-nav-link-wrap">
       <i class="icon-circle-left"></i>
       <div class="article-nav-title">
         
-          通过继承实现一个搜索框架
+          Swift4的Codable探究
         
       </div>
     </a>
   
   
-    <a href="/2018/04/08/Swift4的Codable探究/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">Swift4的Codable探究</div>
+    <a href="/2017/11/05/CocoaPods私有repo/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">CocoaPods私有repo</div>
       <i class="icon-circle-right"></i>
     </a>
   
