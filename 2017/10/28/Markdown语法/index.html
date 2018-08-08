@@ -8,17 +8,17 @@
   <link rel="dns-prefetch" href="https://mistdon.github.io">
   <title>Markdown语法 | 大东哥</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Code and love story">
+  <meta name="description" content="以下介绍几种常用常见的Markdown语法 1. 强调在Markdown中，可以使用  和  _  来表示斜体和加粗。例如粗体* 12**粗体**__斜体__ 效果： 粗体 斜体 2. 锚点1# 锚点 会被解析成 1&amp;lt;h1 id=&quot;user-content-锚点&quot;&amp;gt;锚点&amp;lt;/h1&amp;gt; 这样我们添加了一个user-content-的前缀，如果是自己添加链接使用Markdown的形">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Markdown语法">
 <meta property="og:url" content="https://mistdon.github.io/2017/10/28/Markdown语法/index.html">
 <meta property="og:site_name" content="大东哥">
-<meta property="og:description" content="Code and love story">
+<meta property="og:description" content="以下介绍几种常用常见的Markdown语法 1. 强调在Markdown中，可以使用  和  _  来表示斜体和加粗。例如粗体* 12**粗体**__斜体__ 效果： 粗体 斜体 2. 锚点1# 锚点 会被解析成 1&amp;lt;h1 id=&quot;user-content-锚点&quot;&amp;gt;锚点&amp;lt;/h1&amp;gt; 这样我们添加了一个user-content-的前缀，如果是自己添加链接使用Markdown的形">
 <meta property="og:locale" content="zh-cn">
-<meta property="og:updated_time" content="2018-08-07T02:40:38.001Z">
+<meta property="og:updated_time" content="2018-08-08T05:56:33.187Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Markdown语法">
-<meta name="twitter:description" content="Code and love story">
+<meta name="twitter:description" content="以下介绍几种常用常见的Markdown语法 1. 强调在Markdown中，可以使用  和  _  来表示斜体和加粗。例如粗体* 12**粗体**__斜体__ 效果： 粗体 斜体 2. 锚点1# 锚点 会被解析成 1&amp;lt;h1 id=&quot;user-content-锚点&quot;&amp;gt;锚点&amp;lt;/h1&amp;gt; 这样我们添加了一个user-content-的前缀，如果是自己添加链接使用Markdown的形">
   
     <link rel="alternative" href="/atom.xml" title="大东哥" type="application/atom+xml">
   
@@ -172,7 +172,47 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        
+        <p>以下介绍几种常用常见的Markdown语法</p>
+<h2 id="1-强调"><a href="#1-强调" class="headerlink" title="1. 强调"></a>1. 强调</h2><p>在Markdown中，可以使用 <em> 和  _  来表示斜体和加粗。例如</em>粗体*</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">**粗体**</span><br><span class="line">__斜体__</span><br></pre></td></tr></table></figure>
+<p>效果：</p>
+<p><strong>粗体</strong></p>
+<p><strong>斜体</strong></p>
+<h2 id="2-锚点"><a href="#2-锚点" class="headerlink" title="2. 锚点"></a>2. 锚点</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 锚点</span></span><br></pre></td></tr></table></figure>
+<p>会被解析成</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;h1 id=<span class="string">"user-content-锚点"</span>&gt;锚点&lt;/h1&gt;</span><br></pre></td></tr></table></figure>
+<p>这样我们添加了一个user-content-的前缀，如果是自己添加链接使用Markdown的形式，可以通过链接的形式访问</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[访问链接](<span class="comment">#user-content-锚点)</span></span><br></pre></td></tr></table></figure>
+<h2 id="3-代办列表"><a href="#3-代办列表" class="headerlink" title="3. 代办列表"></a>3. 代办列表</h2><p>表示列表是否勾选状态，注意: [ ]前后都要有空格</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">- [ ] 不勾选</span><br><span class="line">- [ x ] 勾选</span><br></pre></td></tr></table></figure>
+<p>效果如下：</p>
+<ul>
+<li style="list-style: none"><input type="checkbox"> 不勾选</li>
+<li style="list-style: none"><input type="checkbox" checked> 勾选</li>
+</ul>
+<h2 id="4-表格"><a href="#4-表格" class="headerlink" title="4. 表格"></a>4. 表格</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">| Content Cell | Content Cell  | Content Cell |</span><br></pre></td></tr></table></figure>
+<p>效果</p>
+<table>
+<thead>
+<tr>
+<th>Content Cell</th>
+<th>Content Cell</th>
+<th>Content Cell</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-图片"><a href="#5-图片" class="headerlink" title="5. 图片"></a>5. 图片</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">![Alt text](/path/to/img.png)</span><br></pre></td></tr></table></figure>
+<p>参考链接：</p>
+<ul>
+<li><a href="https://coding.net/help/doc/project/markdown.html" target="_blank" rel="noopener">Markdown帮助文档</a>、</li>
+</ul>
+
       
 
       

@@ -18,7 +18,7 @@
 <meta property="og:locale" content="zh-cn">
 <meta property="og:image" content="https://cdn-images-1.medium.com/max/1600/1*YKokr5q6sL-Cge6AVPBsyQ.gif">
 <meta property="og:image" content="https://cdn-images-1.medium.com/max/1600/1*kRJ3buv6d1vvGRI74Dw9RQ.gif">
-<meta property="og:updated_time" content="2018-08-07T07:40:03.841Z">
+<meta property="og:updated_time" content="2018-08-08T05:28:24.305Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="理解Swift的Copy-on-Write机制">
 <meta name="twitter:description" content="翻译：原文链接：Understanding Swift Copy-on-Write mechanisms 在Swift中，我们有引用类型(类Classes)和值类型(结构体Structs, 元组Tuples, 枚举enums)。值类型有一个Copy机制: 如果你将一个值类型变量赋值给你一个变量，或者将它作为参数传递给一个函数(inoout 参数除外), 这个值类型的数据将会被Copy。你将会有两个">
@@ -193,7 +193,7 @@
 <p>上面的例子展示了如何通过引用类型为一个泛型值类型T添加Copy-on-Write机制。通过管理一个引用类型，当它的值不是为唯一的引用类型是返回一个新的实例，否则返回唯一的引用类型。</p>
 <h3 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h3><p>Copy-on-Write是一个非常机智的方法来优化值类型的Copy，这个机制在Swift中被广泛应用，即使大多数的时候我们并没有直观的看到它，底层函数帮我们实现了它。但是知道它的实现原理对我们日常的编程也是非常有好处的。</p>
 <p><img src="https://cdn-images-1.medium.com/max/1600/1*kRJ3buv6d1vvGRI74Dw9RQ.gif" alt="That&#39;s all folks"></p>
-<p>以上是Copy-on_Write的所有内容，希望你喜欢。</p>
+<p>以上是Copy-on-Write的所有内容，希望你喜欢。</p>
 
       
 
