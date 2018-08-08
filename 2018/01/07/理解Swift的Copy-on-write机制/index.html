@@ -9,7 +9,7 @@
   <title>理解Swift的Copy-on-Write机制 | 大东哥</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="翻译：原文链接：Understanding Swift Copy-on-Write mechanisms 在Swift中，我们有引用类型(类Classes)和值类型(结构体Structs, 元组Tuples, 枚举enums)。值类型有一个Copy机制: 如果你将一个值类型变量赋值给你一个变量，或者将它作为参数传递给一个函数(inoout 参数除外), 这个值类型的数据将会被Copy。你将会有两个">
-<meta name="keywords" content="Swift,翻译,iOS">
+<meta name="keywords" content="iOS,Swift,翻译">
 <meta property="og:type" content="article">
 <meta property="og:title" content="理解Swift的Copy-on-Write机制">
 <meta property="og:url" content="https://mistdon.github.io/2018/01/07/理解Swift的Copy-on-Write机制/index.html">
@@ -233,15 +233,15 @@
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">iOS</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
         			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Swift</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
         			<a href="javascript:void(0)" class="js-tag article-tag-list-link color3">翻译</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">iOS</a>
         		</li>
       		
 		</ul>
@@ -270,6 +270,15 @@
 
   
 <nav id="article-nav">
+  
+    <a href="/2018/04/08/Swift4的Codable探究/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          Swift4的Codable探究
+        
+      </div>
+    </a>
   
   
     <a href="/2017/11/05/CocoaPods私有repo/" id="article-nav-older" class="article-nav-link-wrap">
@@ -395,6 +404,14 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">iOS</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color1">Swift</a>
+              </li>
+             
+              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">Git</a>
               </li>
              
@@ -403,15 +420,7 @@ return o(i(t),arguments.length<2?void 0:u(arguments[1]))}})},function(t,n,r){var
               </li>
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color1">Swift</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">翻译</a>
-              </li>
-             
-              <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">iOS</a>
               </li>
              
               <li class="article-tag-list-item">

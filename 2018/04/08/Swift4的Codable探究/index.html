@@ -6,19 +6,20 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="https://mistdon.github.io">
-  <title>all-archives | 大东哥</title>
+  <title>Swift4的Codable探究 | 大东哥</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Code and love story">
-<meta property="og:type" content="website">
-<meta property="og:title" content="all-archives">
-<meta property="og:url" content="https://mistdon.github.io/all-archives/index.html">
+  <meta name="description" content="在Swift4中，编码和解码引入了Encodable和Decodable这两个协议，而Codable是Encodable和Decodable的集合。在Swift中，Enum、Struct和Class都支持Codable。">
+<meta name="keywords" content="iOS,Swift">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Swift4的Codable探究">
+<meta property="og:url" content="https://mistdon.github.io/2018/04/08/Swift4的Codable探究/index.html">
 <meta property="og:site_name" content="大东哥">
-<meta property="og:description" content="Code and love story">
+<meta property="og:description" content="在Swift4中，编码和解码引入了Encodable和Decodable这两个协议，而Codable是Encodable和Decodable的集合。在Swift中，Enum、Struct和Class都支持Codable。">
 <meta property="og:locale" content="zh-cn">
-<meta property="og:updated_time" content="2018-08-07T02:40:38.003Z">
+<meta property="og:updated_time" content="2018-08-08T07:38:07.719Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="all-archives">
-<meta name="twitter:description" content="Code and love story">
+<meta name="twitter:title" content="Swift4的Codable探究">
+<meta name="twitter:description" content="在Swift4中，编码和解码引入了Encodable和Decodable这两个协议，而Codable是Encodable和Decodable的集合。在Swift中，Enum、Struct和Class都支持Codable。">
   
     <link rel="alternative" href="/atom.xml" title="大东哥" type="application/atom+xml">
   
@@ -152,27 +153,28 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="all-archives-" class="article article-type-all-archives " itemscope itemprop="blogPost">
+            <article id="post-Swift4的Codable探究" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      all-archives
+      Swift4的Codable探究
     </h1>
   
 
         
-        <a href="/all-archives/index.html" class="archive-article-date">
-  	<time datetime="2018-08-07T02:40:38.003Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-08-07</time>
+        <a href="/2018/04/08/Swift4的Codable探究/" class="archive-article-date">
+  	<time datetime="2018-04-08T07:35:08.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2018-04-08</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        
+        <p>在Swift4中，编码和解码引入了Encodable和Decodable这两个协议，而Codable是Encodable和Decodable的集合。在Swift中，Enum、Struct和Class都支持Codable。<br><a id="more"></a><br>一个简单的例子</p>
+
       
 
       
@@ -206,7 +208,33 @@
     <div class="article-info article-info-index">
       
       
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">iOS</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">Swift</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
       
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/移动端//" class="article-tag-list-link color4">移动端</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
 
       
 
@@ -217,6 +245,16 @@
 </article>
 
   
+<nav id="article-nav">
+  
+  
+    <a href="/2018/01/07/理解Swift的Copy-on-Write机制/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">理解Swift的Copy-on-Write机制</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
 
 <aside class="wrap-side-operation">
     <div class="mod-side-operation">
@@ -235,6 +273,16 @@
 </aside>
 
 
+
+  
+  
+  
+
+  
+
+  
+
+  
 
 
           </div>
@@ -257,7 +305,7 @@
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
 		isTag: false,
 		isCategory: false,
