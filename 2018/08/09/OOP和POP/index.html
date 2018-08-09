@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-cn,en,default">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Swift,iOS," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="面向对象编程(Object Oriented Programming, OOP)是我们使用OC的核心，也是我们Swift开发的主要编程思想，然后在2015年WWDC之后，苹果第一次提出了Swift的面向协议编程 (Protocol Oritented Programming, POP), 一个全新的编程范式。">
+<meta name="keywords" content="Swift,iOS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="OOP和POP">
+<meta property="og:url" content="https://mistdon.github.io/2018/08/09/OOP和POP/index.html">
+<meta property="og:site_name" content="大东哥">
+<meta property="og:description" content="面向对象编程(Object Oriented Programming, OOP)是我们使用OC的核心，也是我们Swift开发的主要编程思想，然后在2015年WWDC之后，苹果第一次提出了Swift的面向协议编程 (Protocol Oritented Programming, POP), 一个全新的编程范式。">
+<meta property="og:locale" content="zh-cn">
+<meta property="og:updated_time" content="2018-08-09T03:29:38.934Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="OOP和POP">
+<meta name="twitter:description" content="面向对象编程(Object Oriented Programming, OOP)是我们使用OC的核心，也是我们Swift开发的主要编程思想，然后在2015年WWDC之后，苹果第一次提出了Swift的面向协议编程 (Protocol Oritented Programming, POP), 一个全新的编程范式。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://mistdon.github.io/2018/08/09/OOP和POP/"/>
+
+
+
+
+
+  <title>OOP和POP | 大东哥</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-cn">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">大东哥</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Code and Love</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://mistdon.github.io/2018/08/09/OOP和POP/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="大东哥">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://avatars1.githubusercontent.com/u/32269?v=3&s=460">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="大东哥">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">OOP和POP</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-08-09T10:01:48+08:00">
+                2018-08-09
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/移动端/" itemprop="url" rel="index">
+                    <span itemprop="name">移动端</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>面向对象编程(Object Oriented Programming, OOP)是我们使用OC的核心，也是我们Swift开发的主要编程思想，然后在2015年WWDC之后，苹果第一次提出了Swift的面向协议编程 (Protocol Oritented Programming, POP), 一个全新的编程范式。<br><a id="more"></a></p>
+<h2 id="OOP-Object-Oriented-Programming-面向对象编程"><a href="#OOP-Object-Oriented-Programming-面向对象编程" class="headerlink" title="OOP(Object Oriented Programming, 面向对象编程)"></a>OOP(Object Oriented Programming, 面向对象编程)</h2><p>OOP把对象作为程序的基本单元，一个对象包含了数据和操作数据的函数。面向对象的程序设计把计算机程序视为一组对象的集合，而每个对象都可以接收其他对象发过来的消息，并处理这些消息，计算机程序的执行就是一系列消息在各个对象之间的传递。</p>
+<p>面向对象的三大特性：</p>
+<ul>
+<li><p>封装</p>
+<p>即将客观事物封装称抽象的类，通过访问权限控制暴漏接口，但是把具体实现隐藏起来。具有可读性、科维护性、可扩展性的特点</p>
+</li>
+<li><p>多态</p>
+<p>多态是指一个类实例的相同方法在不同情形下有不同的表现形式，子类可以重写父类的方法</p>
+</li>
+<li><p>继承</p>
+<p>可以使用父类的所有功能，无需重新编写原来的类的方法，同时可以进行扩展。是一种复用的技术。</p>
+<p>OC和Swift中只能单继承，不能多继承</p>
+</li>
+</ul>
+<h4 id="OOP的优点"><a href="#OOP的优点" class="headerlink" title="OOP的优点"></a>OOP的优点</h4><ol>
+<li>重用性</li>
+<li>灵活性</li>
+<li>扩展性</li>
+</ol>
+<h4 id="OOP的缺点"><a href="#OOP的缺点" class="headerlink" title="OOP的缺点"></a>OOP的缺点</h4><ol>
+<li>隐式共享：Class是引用类型，容易造成多处引用</li>
+<li>冗长的父类</li>
+<li>很难在不同继承关系的类里共用代码(<a href="https://en.wikipedia.org/wiki/Cross-cutting_concern" target="_blank" rel="noopener">横切关注点Cross-Cutting Concerns</a>)</li>
+<li>动态派发的安全性</li>
+</ol>
+<h2 id="POP-Protocol-Oriented-Programming-面向协议编程"><a href="#POP-Protocol-Oriented-Programming-面向协议编程" class="headerlink" title="POP(Protocol Oriented Programming, 面向协议编程)"></a>POP(Protocol Oriented Programming, 面向协议编程)</h2><p>“所谓协议，就是一组属性和/或方法的定义，而如果某个具体类型想要遵守一个协议，那它需要实现这个协议所定义的所有这些内容。协议实际上‘’关于实现的约定’ “</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">Greetable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> name : <span class="type">String</span>&#123;<span class="keyword">get</span>&#125;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">greet</span><span class="params">()</span></span></span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Person</span> : <span class="title">Greetable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> name: <span class="type">String</span></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">greet</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">"Hello, <span class="subst">\(name)</span>"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Cat</span>: <span class="title">Greetable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> name: <span class="type">String</span></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">greet</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">"meow ~ <span class="subst">\(name)</span>"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> array: [<span class="type">Greetable</span>] = [<span class="type">Person</span>(name: <span class="string">"Don"</span>),</span><br><span class="line">                          <span class="type">Cat</span>(name: <span class="string">"xiao"</span>)]</span><br><span class="line"><span class="keyword">for</span> obj <span class="keyword">in</span> array&#123;</span><br><span class="line">    obj.greet()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面的例子体现了协议在解决动态派发时的过程，如果是两个不继承的类实现相同方法呢，Swift中协议的扩展可以提供默认的实现，如下</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">protocol</span> <span class="title">Greetable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">var</span> name : <span class="type">String</span>&#123;<span class="keyword">get</span>&#125;</span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">greet</span><span class="params">()</span></span></span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">Greetable</span></span>&#123; <span class="comment">// 协议扩展，可以提供默认的实现，这也是Swift成为一门协议优先的语言</span></span><br><span class="line">    <span class="function"><span class="keyword">func</span> <span class="title">greet</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">"Hello, <span class="subst">\(name)</span>"</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Person</span> : <span class="title">Greetable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> name: <span class="type">String</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Cat</span>: <span class="title">Greetable</span> </span>&#123;</span><br><span class="line">    <span class="keyword">let</span> name: <span class="type">String</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> array: [<span class="type">Greetable</span>] = [<span class="type">Person</span>(name: <span class="string">"Don"</span>),</span><br><span class="line">                          <span class="type">Cat</span>(name: <span class="string">"xiao"</span>)]</span><br><span class="line"><span class="keyword">for</span> obj <span class="keyword">in</span> array&#123;</span><br><span class="line">    obj.greet()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="POP有哪些优势"><a href="#POP有哪些优势" class="headerlink" title="POP有哪些优势"></a>POP有哪些优势</h2><ol>
+<li>更加灵活：相比于冗长的父类，可以使用协议及其扩展将默认实现移到协议中</li>
+<li>减少依赖：相比于OOP，更加关注于实现</li>
+</ol>
+<h2 id="参考资料："><a href="#参考资料：" class="headerlink" title="参考资料："></a>参考资料：</h2><ol>
+<li><a href="https://developer.apple.com/videos/play/wwdc2015/408/" target="_blank" rel="noopener">Protocol-Oriented Programming in Swift</a></li>
+<li><a href="https://onevcat.com/2016/11/pop-cocoa-1/" target="_blank" rel="noopener">面向协议的编程与Cocoa的邂逅(上)</a></li>
+<li><a href="https://onevcat.com/2016/12/pop-cocoa-2/" target="_blank" rel="noopener">面向协议的编程与Cocoa的邂逅(下)</a></li>
+</ol>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Swift/" rel="tag"># Swift</a>
+          
+            <a href="/tags/iOS/" rel="tag"># iOS</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/04/25/Xcode如何帮助我们提高效率/" rel="next" title="Xcode如何帮助我们提高效率">
+                <i class="fa fa-chevron-left"></i> Xcode如何帮助我们提高效率
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="https://avatars1.githubusercontent.com/u/32269?v=3&s=460"
+                alt="大东哥" />
+            
+              <p class="site-author-name" itemprop="name">大东哥</p>
+              <p class="site-description motion-element" itemprop="description">Code and love story</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/mistdon" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-globe"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:wonderland.don@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-globe"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="hhttps://stackoverflow.com/users/6532225/shendong" target="_blank" title="StackOverflow">
+                      
+                        <i class="fa fa-fw fa-globe"></i>StackOverflow</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#OOP-Object-Oriented-Programming-面向对象编程"><span class="nav-number">1.</span> <span class="nav-text">OOP(Object Oriented Programming, 面向对象编程)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#OOP的优点"><span class="nav-number">1.0.1.</span> <span class="nav-text">OOP的优点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#OOP的缺点"><span class="nav-number">1.0.2.</span> <span class="nav-text">OOP的缺点</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#POP-Protocol-Oriented-Programming-面向协议编程"><span class="nav-number">2.</span> <span class="nav-text">POP(Protocol Oriented Programming, 面向协议编程)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#POP有哪些优势"><span class="nav-number">3.</span> <span class="nav-text">POP有哪些优势</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料："><span class="nav-number">4.</span> <span class="nav-text">参考资料：</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">大东哥</span>
+
+  
+</div>
+
+
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv">. </span>
+</span>
+</div>
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
