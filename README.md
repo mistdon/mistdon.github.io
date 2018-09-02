@@ -25,10 +25,13 @@ HEXO驱动代码托管在私人Gitlab上
    hexo deploy -g -m $1
    ```
 
-每次提交的时候执行 
+每次提交的时候执行  
 
 ```bash
 sh deploy.sh "commit_message"
 ```
-
+hexo server test的时候执行
+```bash
+sh hexo-server.sh 4000 // 后面的端口号是可选的
+```
 可以避免 *commits* 和 *README.md* 被覆盖
