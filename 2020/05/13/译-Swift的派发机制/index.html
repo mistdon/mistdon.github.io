@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-cn,en,default">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Swift," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Swift的派发机制，分为静态派发和动态动态派发，这也是Swift的运行效率高的原因。具体的原理请看这篇翻译的文章">
+<meta name="keywords" content="Swift">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[译]Swift的静态派发和动态派发机制">
+<meta property="og:url" content="https://mistdon.github.io/2020/05/13/译-Swift的派发机制/index.html">
+<meta property="og:site_name" content="深山问">
+<meta property="og:description" content="Swift的派发机制，分为静态派发和动态动态派发，这也是Swift的运行效率高的原因。具体的原理请看这篇翻译的文章">
+<meta property="og:locale" content="zh-cn">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2020/4/10/1716467ee54175f7?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2020/4/10/17164684c5ebb6ee?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2020/4/10/171646748ff42dd9?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2020/4/10/171646593f454b4a?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2020/4/10/17164662931c45ad?imageslim">
+<meta property="og:updated_time" content="2020-05-13T13:53:43.558Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="[译]Swift的静态派发和动态派发机制">
+<meta name="twitter:description" content="Swift的派发机制，分为静态派发和动态动态派发，这也是Swift的运行效率高的原因。具体的原理请看这篇翻译的文章">
+<meta name="twitter:image" content="https://user-gold-cdn.xitu.io/2020/4/10/1716467ee54175f7?imageView2/0/w/1280/h/960/format/webp/ignore-error/1">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://mistdon.github.io/2020/05/13/译-Swift的派发机制/"/>
+
+
+
+
+
+  <title>[译]Swift的静态派发和动态派发机制 | 深山问</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-cn">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">深山问</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">Code and Love</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://mistdon.github.io/2020/05/13/译-Swift的派发机制/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="深山问">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://avatars1.githubusercontent.com/u/32269?v=3&s=460">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="深山问">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">[译]Swift的静态派发和动态派发机制</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-05-13T21:32:27+08:00">
+                2020-05-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/移动端/" itemprop="url" rel="index">
+                    <span itemprop="name">移动端</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Swift的派发机制，分为静态派发和动态动态派发，这也是Swift的运行效率高的原因。具体的原理请看这篇翻译的文章<br><a id="more"></a></p>
+<p><img src="https://user-gold-cdn.xitu.io/2020/4/10/1716467ee54175f7?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="Static vs Dynamic Method Dispatch"></p>
+<blockquote>
+<p>原文地址：<a href="https://medium.com/flawless-app-stories/static-vs-dynamic-dispatch-in-swift-a-decisive-choice-cece1e872d" target="_blank" rel="noopener">https://medium.com/flawless-app-stories/static-vs-dynamic-dispatch-in-swift-a-decisive-choice-cece1e872d</a></p>
+</blockquote>
+<blockquote>
+<p>参考文献：<a href="https://trinhngocthuyen.github.io/tech/method-dispatch-in-swift/" target="_blank" rel="noopener">Swift的方法派发机制</a></p>
+</blockquote>
+<p>如果你了解面向对象，对于 <em><code>方法派发机制</code></em> 应该不陌生。</p>
+<h3 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h3><p>首先说下第一个结论：<code>静态派发机制</code> 同时支持 <code>值类型</code> 和 <code>引用类型</code> 。</p>
+<p>然而，动态派发机制仅支持 <code>引用类型(reference types)</code>, 比如 <code>Class</code> 。简而言之: 对于动态性或者动态派发，我们需要用到继承特性，而这是值类型不支持的。</p>
+<p>牢记这一点，我们接着往下看！<br><img src="https://user-gold-cdn.xitu.io/2020/4/10/17164684c5ebb6ee?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="PROCEED"><br>首先全面了解一下，由4种派发机制，而不是两种(静态和动态):</p>
+<ol>
+<li>内联(inline) (最快)</li>
+<li>静态派发 (Static Dispatch)</li>
+<li>函数表派发 (Virtual Dispatch)</li>
+<li>动态派发 (Dynamic Dispatch)(最慢)</li>
+</ol>
+<p>由编译器决定应该使用哪种派发技术。当然，优先选择内联函数, 然后按需选择。</p>
+<h3 id="静态派发-vs-动态派发-或者-Swift-vs-Objective-C"><a href="#静态派发-vs-动态派发-或者-Swift-vs-Objective-C" class="headerlink" title="静态派发 vs 动态派发 或者 Swift vs Objective-C"></a>静态派发 vs 动态派发 或者 Swift vs Objective-C</h3><p>Objective-C默认支持<code>动态派发</code>, 这种派发技术以多态的形式为开发人员提供了灵活性。比如子类可以重写父类的方法，这很棒，然而，这也是需要代价的。</p>
+<p>动态派发以一定量的运行时开销为代价，提高了语言的灵活性。这意味着，在动态派发机制下，对于每个方法的调用，编译器必须在方法列表(witness table(虚函数表或者其他语言中的动态表))中查找执行方法的实现。编译器需要判断调用方，是选择父类的实现，还是子类的实现。而且由于所有对象的内存都是在运行时分配的，因此编译器只能在运行时执行检查。</p>
+<p>而静态调用，则没有这个问题。在编译期的时候，编译器就知道要为某个方法调用某种实现。因此, 编译器可以执行某些优化，甚至在可能的情况下，可以将某些代码转换成inline函数，从而使整体执行速度异常快。</p>
+<blockquote>
+<p>如何在Swift中实现动态派发和静态派发？</p>
+</blockquote>
+<ol>
+<li><p>要实现动态派发，我们可以使用继承，重写父类的方法。另外我们可以使用<em>dynamic</em>关键字，并且需要在<em>@objc</em>关键字前面加上关键字，以便将方法公开给OC runtime使用。</p>
+</li>
+<li><p>要实现静态派发，我们可以使用<em>final</em>和<em>static</em>关键字，保证不会被覆写。</p>
+</li>
+</ol>
+<h3 id="让我们继续深入下去："><a href="#让我们继续深入下去：" class="headerlink" title="让我们继续深入下去："></a>让我们继续深入下去：</h3><blockquote>
+<p>注: 编译性语言有3种基础的函数派发方式: 直接派发(Direct Dispatch)，函数表派发(Table Dispatch), 消息机制派发(Message Dispatch)</p>
+</blockquote>
+<h4 id="静态派发-或者直接派发"><a href="#静态派发-或者直接派发" class="headerlink" title="静态派发(或者直接派发)"></a>静态派发(或者直接派发)</h4><p>如上面所说，他们和<code>动态派发</code>相比，非常快。编译器可以在编译期定位到函数的位置。因此，当函数被调用时，编译器能通过函数的内存地址，直接找到它的函数实现。这极大的提高了性能，可以到达类似inline的编译期优化。</p>
+<h4 id="动态派发"><a href="#动态派发" class="headerlink" title="动态派发"></a>动态派发</h4><p>如前所述, 在这种类型的派发中，在运行时而不是编译时选择实现方法，这会增加一下性能开销。</p>
+<blockquote>
+<p>这里也许你会有这样的疑问？既然动态派发有性能开销，我们为什么还要使用它？</p>
+</blockquote>
+<p><img src="https://user-gold-cdn.xitu.io/2020/4/10/171646748ff42dd9?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="question"></p>
+<p>因为它具有灵活性。实际上，大多数的OOP语言都支持动态派发，因为它允许多态。</p>
+<p>动态派发有两种形式：</p>
+<ol>
+<li><strong>函数表派发( Table dispatch )</strong></li>
+</ol>
+<p>这种调用方式利用一个表，该表是一组函数指针，称为<em>witness table</em>，以查找特性方法的实现。</p>
+<blockquote>
+<p><em>witness table</em>如何工作？</p>
+</blockquote>
+<ul>
+<li>每个子类都有它自己的表结构</li>
+<li>对于类中每个重写的方法，都有不同的函数指针</li>
+<li>当子类添加新方法时，这些方法指针会添加在表数组的末尾</li>
+<li>最后，编译器在运行时使用此表来查找调用函数的实现</li>
+</ul>
+<p>由于编译器必须从表中读取方法实现的内存地址，然后跳转到该地址，因此它需要两条附加指令，因此它比静态分派慢，但仍比消息分派快。</p>
+<blockquote>
+<p>注意：我不太确定，但是这种特殊的派发技术可以是虚拟派发，因为它利用了虚拟表，但是我找不到具体的参考。</p>
+</blockquote>
+<ol start="2">
+<li><strong>消息派发( Message dispatch )</strong></li>
+</ol>
+<p>这种动态派发方式是最动态的。事实上，它表现优异(省去了优化部分)，目前，Cocoa框架在KVO，CoreData等很多地方在使用它。</p>
+<p>此外，它还可以使用<code>method swizzling</code>, 我们可以在运行时更改函数的实现。<br><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">eg:</span><br><span class="line"><span class="keyword">let</span> original = #selector(getter: <span class="type">UIViewController</span>.childForStatusBarStyle)</span><br><span class="line"><span class="keyword">let</span> swizzled = #selector(getter: <span class="type">UIViewController</span>.swizzledChildForStatusBarStyle)</span><br><span class="line"><span class="keyword">let</span> originalMethod = class_getInstanceMethod(<span class="type">UIViewController</span>.<span class="keyword">self</span>, original)</span><br><span class="line"><span class="keyword">let</span> swizzled = class_getInstanceMethod(<span class="type">UIViewController</span>.<span class="keyword">self</span>, swizzled)</span><br><span class="line">method_exchangeImplementations(originalMethod, swizzledMethod)</span><br></pre></td></tr></table></figure></p>
+<p>目前，Swift本身不支持这种功能，而是利用Objective-C的runtime特性，间接实现这种动态性。</p>
+<p>要使用动态性，我们需要使用<code>dynamic</code>关键字。在Swift4.0之前，我们需要一起使用<code>dynamic</code>和<code>@objc</code>. Swift4.0之后，我们需要表明<code>@objc</code>让我们的方法支持Objective-C的调用，以支持消息派发。</p>
+<p>由于我们使用了Objective-C的runtime特性, 当一个message被发送时, runtime会去动态查找方法的实现(implemention)。这很慢，为了提供效率，我们使用缓存来尽可能的让常用的方法被快速找到。</p>
+<h3 id="举例："><a href="#举例：" class="headerlink" title="举例："></a>举例：</h3><h5 id="值类型-Value-type"><a href="#值类型-Value-type" class="headerlink" title="值类型 (Value type)"></a>值类型 (Value type)</h5><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">		<span class="function"><span class="keyword">func</span> <span class="title">isIrritating</span><span class="params">()</span></span> -&gt; <span class="type">Bool</span> &#123; &#125;  <span class="comment">// Static</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">Person</span> </span>&#123;</span><br><span class="line">		<span class="function"><span class="keyword">func</span> <span class="title">canBeEasilyPissedOff</span><span class="params">()</span></span> -&gt; <span class="type">Bool</span> &#123; &#125; <span class="comment">// Static</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>由于<code>struct</code>和<code>enum</code>都是<code>值类型</code>, 不支持继承，编译器将他们置为静态派发下，因为他们永远不可能被子类化。</p>
+<h5 id="协议-Protocol"><a href="#协议-Protocol" class="headerlink" title="协议 (Protocol)"></a>协议 (Protocol)</h5><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Protocol</span> <span class="type">Animal</span> &#123;</span><br><span class="line">		<span class="function"><span class="keyword">func</span> <span class="title">isCute</span><span class="params">()</span></span> -&gt; <span class="type">Bool</span> &#123; &#125; <span class="comment">// Table</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">extension</span> <span class="title">Animal</span> </span>&#123;</span><br><span class="line">		<span class="function"><span class="keyword">func</span>  <span class="title">canGetAngry</span><span class="params">()</span></span> -&gt; <span class="type">Bool</span> &#123; &#125; <span class="comment">// Static</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里的重点是在<em>extenison(扩展)</em>里面定义的函数，使用<em>静态派发(static dispatch)</em></p>
+<h5 id="类-Class"><a href="#类-Class" class="headerlink" title="类 (Class)"></a>类 (Class)</h5><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Dog</span>: <span class="title">Animal</span> </span>&#123;</span><br><span class="line">		<span class="function"><span class="keyword">func</span> <span class="title">isCute</span><span class="params">()</span></span> -&gt; <span class="type">Bool</span> &#123; &#125; <span class="comment">// Tablel</span></span><br><span class="line">		<span class="meta">@objc</span> <span class="keyword">dynamic</span> <span class="function"><span class="keyword">func</span> <span class="title">hoursSleep</span><span class="params">()</span></span> -&gt; <span class="type">Int</span> &#123; &#125; <span class="comment">// Message</span></span><br><span class="line">&#125;</span><br><span class="line">extenison <span class="type">Dog</span> &#123;</span><br><span class="line">		<span class="function"><span class="keyword">func</span> <span class="title">canBite</span><span class="params">()</span></span> -&gt; <span class="type">Bool</span> &#123; &#125; <span class="comment">// Static</span></span><br><span class="line">		<span class="meta">@objc</span> <span class="function"><span class="keyword">func</span> <span class="title">goWild</span><span class="params">()</span></span> &#123; &#125; <span class="comment">// Message</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">final</span> <span class="class"><span class="keyword">class</span> <span class="title">Employee</span> </span>&#123;</span><br><span class="line">		<span class="function"><span class="keyword">func</span> <span class="title">canCode</span><span class="params">()</span></span> -&gt; <span class="type">Bool</span> &#123; &#125; <span class="comment">// Static</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>普通方法声明遵循协议的规则</li>
+<li>当我们将方法公开给Objecitve-C runtime时用<code>@objc</code>，使用静态派发(static dispatch)</li>
+<li>当一个类被标记为final时，该类不能被子类化，因为使用静态派发(static dispatch)</li>
+</ul>
+<p><img src="https://user-gold-cdn.xitu.io/2020/4/10/171646593f454b4a?imageView2/0/w/1280/h/960/format/webp/ignore-error/1" alt="Compare"></p>
+<p>好吧，现在这只是我在讲，您相信我所说的一切，对吗？</p>
+<blockquote>
+<p>现在如何证明这些方法实际上是使用我上面解释的派发技术？</p>
+</blockquote>
+<p>为此，我们必须看一下<a href="https://github.com/apple/swift/blob/master/docs/SIL.rst" target="_blank" rel="noopener">Swift中间语言(SIL)</a>。通过我在网上可以进行的研究，我发现有一种方法:</p>
+<ol>
+<li><p>如果函数使用Table派发，则它会出现在<code>vtable</code>（或<code>witness_table</code>）中</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sil_vtable Animal &#123; </span><br><span class="line">＃Animal.isCute！1：（Animal）-&gt;（）-&gt;（）：main.Animal.isCute（）-&gt;（）// Animal.isCute（）</span><br><span class="line">…… </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>如果函数使用Message Dispatch，则关键字<code>volatile</code>应该存在于调用中。另外，您将找到两个标记<code>foreign</code>和<code>objc_method</code>，指示使用Objective-C运行时调用了该函数。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">％14 = class_method [volatile]％13：$ Dog，＃Dog.goWild！1.foreign：（Dog）-&gt;（）-&gt;（），$ @ convention（objc_method）（Dog）-&gt;（）</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>如果没有以上两种情况的证据，答案是<code>静态派发</code>。</p>
+</li>
+</ol>
+<p><img src="https://user-gold-cdn.xitu.io/2020/4/10/17164662931c45ad?imageslim" alt="Satisfied"></p>
+<p>好吧，就是我这边！我计划这是一个由两篇文章组成的系列文章，而下一篇文章（现在可以在<a href="https://medium.com/better-programming/static-dispatch-over-dynamic-dispatch-a-performance-analysis-47f9fee3803a" target="_blank" rel="noopener">此处</a>获得）将涉及通过测试用例进行静态和动态派发之间的性能比较。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Swift/" rel="tag"># Swift</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/05/13/阿里云配置二级域名-md/" rel="next" title="阿里云配置二级域名.md">
+                <i class="fa fa-chevron-left"></i> 阿里云配置二级域名.md
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="https://avatars1.githubusercontent.com/u/32269?v=3&s=460"
+                alt="深山问" />
+            
+              <p class="site-author-name" itemprop="name">深山问</p>
+              <p class="site-description motion-element" itemprop="description">Code and love story</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">15</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">categories</span>
+                
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/mistdon" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-globe"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="mailto:wonderland.don@gmail.com" target="_blank" title="E-Mail">
+                      
+                        <i class="fa fa-fw fa-globe"></i>E-Mail</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="hhttps://stackoverflow.com/users/6532225/shendong" target="_blank" title="StackOverflow">
+                      
+                        <i class="fa fa-fw fa-globe"></i>StackOverflow</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#基础知识"><span class="nav-number">1.</span> <span class="nav-text">基础知识</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#静态派发-vs-动态派发-或者-Swift-vs-Objective-C"><span class="nav-number">2.</span> <span class="nav-text">静态派发 vs 动态派发 或者 Swift vs Objective-C</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#让我们继续深入下去："><span class="nav-number">3.</span> <span class="nav-text">让我们继续深入下去：</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#静态派发-或者直接派发"><span class="nav-number">3.1.</span> <span class="nav-text">静态派发(或者直接派发)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#动态派发"><span class="nav-number">3.2.</span> <span class="nav-text">动态派发</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#举例："><span class="nav-number">4.</span> <span class="nav-text">举例：</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#值类型-Value-type"><span class="nav-number">4.0.1.</span> <span class="nav-text">值类型 (Value type)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#协议-Protocol"><span class="nav-number">4.0.2.</span> <span class="nav-text">协议 (Protocol)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#类-Class"><span class="nav-number">4.0.3.</span> <span class="nav-text">类 (Class)</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">深山问</span>
+
+  
+</div>
+
+
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv">. </span>
+</span>
+</div>
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
